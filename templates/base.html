@@ -1,16 +1,28 @@
 <!DOCTYPE = html>
 <html>
     <head>
-        <title>Blog</title>
+        <title>{{Blog}}</title>
         <style>
             textarea {
                 margin: 10px 0;
                 width: 540px;
                 height: 120px;
             }
+            nav a {
+                margin: 5px;
+            }
+            .title {
+                text-align: center;
+            }
         </style>
     </head>
     <body>
+        <nav>
+            <a class"link" href='/blog'>Main Blog Page</a>
+            <a class="link" href='/newpost'>Add A Blog Entry</a>
+        </nav>
+        <br>
+        <h2 class="title">{{title}}</h2>
         {% block content %}
         {% endblock %}
     </body>

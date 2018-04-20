@@ -34,11 +34,11 @@ def main_display():
         db.session.commit()
 
     blog_posts = Blog.query.all()
-    return render_template('blog.html', posts=blog_posts)
+    return render_template('blog.html', title="Build a Blog", posts=blog_posts)
 
 @app.route('/newpost', methods=['GET'])
 def new_post():
-    return render_template('newpost.html')
+    return render_template('newpost.html', title="Add a Blog Entry")
 
 
 if __name__ == '__main__':
