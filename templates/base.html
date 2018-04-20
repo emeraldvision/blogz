@@ -22,7 +22,14 @@
             <a class="link" href='/newpost'>Add A Blog Entry</a>
         </nav>
         <br>
-        <h2 class="title">{{title}}</h2>
+        {% with messages = get_flashed_messages() %}
+        <ul>
+        {% for message in messages %}
+            <li>{{message}}</li>
+        {% endfor %}
+        </ul>
+        {% endwith %}
+        <h2 class="title">{{page_title}}</h2>
         {% block content %}
         {% endblock %}
     </body>

@@ -27,18 +27,26 @@ def index():
 def main_display():
 
     if request.method == 'POST':
+        blog_title = blog_body = ''
         blog_title = request.form['title']
         blog_body = request.form['body']
-        new_blog = Blog(blog_title, blog_body)
-        db.session.add(new_blog)
-        db.session.commit()
+        if blog_title and blog_title.strip() and blog_body and blog_body.strip():
+            new_blog = Blog(blog_title, blog_body)
+            db.session.add(new_blog)
+            db.session.commit()
+        else:
+            if not blog_title or not blog_title.strip():
+                flash("The post needs a title")
+            if not blog_body or not blog_title.strip():
+                flash("The post body can't be empty")
+            return render_template('newpost.html', page_title="Add a Blog", blog_title=blog_title, blog_body=blog_body)
 
     blog_posts = Blog.query.all()
-    return render_template('blog.html', title="Build a Blog", posts=blog_posts)
+    return render_template('blog.html', page_title="Build a Blog", posts=blog_posts)
 
 @app.route('/newpost', methods=['GET'])
 def new_post():
-    return render_template('newpost.html', title="Add a Blog Entry")
+    return render_template('newpost.html', page_title="Add a Blog Entry")
 
 
 if __name__ == '__main__':
