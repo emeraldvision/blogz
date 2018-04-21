@@ -50,7 +50,7 @@ def main_display():
             return render_template('singlepost.html', page_title=current_blog.title, blog_body=current_blog.body)
         flash("That blog post cannot be found")
 
-    blog_posts = Blog.query.all()
+    blog_posts = Blog.query.order_by(Blog.id.desc()).all()
     return render_template('blog.html', page_title="Build a Blog", posts=blog_posts)
 
 @app.route('/newpost', methods=['GET'])
