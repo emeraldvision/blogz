@@ -42,9 +42,10 @@ def main_display():
                 flash("The post body can't be empty")
             return render_template('newpost.html', page_title="Add a Blog", blog_title=blog_title, blog_body=blog_body)
 
-    blog_id = request.args.get('id')
-    if blog_id:
-        current_blog = Blog.query.filter_by(id=blog_id).first()
+    blog_id_str = (request.args.get('id'))
+    if blog_id_str:
+        blog_id = int(blog_id_str)
+        current_blog = Blog.query.get(blog_id)
         if current_blog:
             return render_template('singlepost.html', page_title=current_blog.title, blog_body=current_blog.body)
         flash("That blog post cannot be found")
