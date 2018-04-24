@@ -1,12 +1,13 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from hashutils import make_pw_hash
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:BlogBuild@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:blogzdatabaze@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
-app.secret_key = 'K5_e55@-P^-cHXc9'
+app.secret_key = '/YUBknN{Y~+wfc&('
 
 
 class Blog(db.Model):
@@ -14,17 +15,30 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     body = db.Column(db.String(1000000))
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
-    def __init__(self, title, body):
+    def __init__(self, title, body, author):
         self.title = title
         self.body = body
+        self.author = author
+
+class User(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(120), unique=True)
+    pw_hash = db.Column(db.String(255))
+    blogs = db.relationship('Blog', backref="author")
+
+    def __init__(self, username, password):
+        self.username = username
+        self.pw_hash = make_pw_hash(password)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return redirect('/blog', code=307)
 
 @app.route('/blog', methods=['GET', 'POST'])
-def main_display():
+def blog():
 
     if request.method == 'POST':
         blog_title = blog_body = ''
@@ -54,7 +68,7 @@ def main_display():
     return render_template('blog.html', page_title="Build a Blog", posts=blog_posts)
 
 @app.route('/newpost', methods=['GET'])
-def new_post():
+def newpost():
     return render_template('newpost.html', page_title="Add a Blog Entry")
 
 
