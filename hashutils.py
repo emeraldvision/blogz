@@ -13,4 +13,4 @@ def make_pw_hash(password, salt=None):
 
 def check_pw_hash(password, hash):
     salt = hash.split(',')[1]
-    return make_pw_hash(password + salt) == hash
+    return make_pw_hash(password, salt) == hash

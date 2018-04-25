@@ -11,6 +11,9 @@
             nav a {
                 margin: 5px;
             }
+            .account {
+                float: right;
+            }
             .title {
                 text-align: center;
             }
@@ -18,8 +21,11 @@
     </head>
     <body>
         <nav>
-            <a class"link" href='/blog'>Main Blog Page</a>
-            <a class="link" href='/newpost'>Add A Blog Entry</a>
+            <a class="account" href='/logout'>Logout</a>
+            <a class="account" href='/login'>Login</a>
+            <a href='/'>Home</a>
+            <a href='/blog'>Blog Posts</a>
+            <a href='/newpost'>Add A Blog Entry</a>
         </nav>
         <br>
         {% with messages = get_flashed_messages() %}

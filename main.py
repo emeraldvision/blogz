@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from hashutils import make_pw_hash
+from hashutils import make_pw_hash, check_pw_hash
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -33,9 +33,11 @@ class User(db.Model):
         self.username = username
         self.pw_hash = make_pw_hash(password)
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return redirect('/blog', code=307)
+
 
 @app.route('/blog', methods=['GET', 'POST'])
 def blog():
@@ -67,9 +69,40 @@ def blog():
     blog_posts = Blog.query.order_by(Blog.id.desc()).all()
     return render_template('blog.html', page_title="Build a Blog", posts=blog_posts)
 
+
 @app.route('/newpost', methods=['GET'])
 def newpost():
     return render_template('newpost.html', page_title="Add a Blog Entry")
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    username = ''
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if not username:
+            flash("Please provide your username")
+        elif not password:
+            flash("Please provide your password")
+        else:
+            user = User.query.filter_by(username=username).first()
+            if not user:
+                flash("Username is unregistered")
+            elif check_pw_hash(password, user.pw_hash):
+                session['username'] = username
+                flash("{0} is logged in".format(username))
+                return redirect('/newpost')
+            else:
+                flash("Incorrect password")
+
+    return render_template('login.html', page_title="Login", username=username)
+
+
+@app.route('/logout')
+def logout():
+    del session['username']
+    return redirect('/')
 
 
 if __name__ == '__main__':
