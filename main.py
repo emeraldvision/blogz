@@ -42,7 +42,8 @@ def require_login():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return redirect('/blog', code=307)
+    users = User.query.all()
+    return render_template('index.html', page_title="Blog Users", users=users)
 
 
 @app.route('/blog', methods=['GET', 'POST'])
