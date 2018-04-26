@@ -15,19 +15,19 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     body = db.Column(db.String(1000000))
-#    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
-    def __init__(self, title, body): #author):
+    def __init__(self, title, body, author):
         self.title = title
         self.body = body
-#        self.author = author
+        self.author = author
 
 class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
     pw_hash = db.Column(db.String(255))
-#    blogs = db.relationship('Blog', backref="author")
+    blogs = db.relationship('Blog', backref="author")
 
     def __init__(self, username, password):
         self.username = username
@@ -52,8 +52,9 @@ def display_blogs():
         blog_title = blog_body = ''
         blog_title = request.form['title']
         blog_body = request.form['body']
+        blog_author = User.query.filter_by(username=session['username']).first()
         if blog_title and blog_title.strip() and blog_body and blog_body.strip():
-            new_blog = Blog(blog_title, blog_body)
+            new_blog = Blog(blog_title, blog_body, blog_author)
             db.session.add(new_blog)
             db.session.commit()
             return redirect('/blog?id=' + str(new_blog.id))
