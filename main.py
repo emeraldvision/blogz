@@ -98,6 +98,33 @@ def login():
 
     return render_template('login.html', page_title="Login", username=username)
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    username = ''
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        verify = request.form['verify']
+        if username and password and verify:
+            if len(username) < 3:
+                flash("Username must be at least 3 characters")
+            elif len(password) < 3:
+                flash("Password must be at least 3 characters")
+            elif User.query.filter_by(username=username).first():
+                flash("The username {0} is already in use".format(username))
+            elif password != verify:
+                flash("Password and confirmation did not match")
+            else:
+                new_user = User(username, password)
+                db.session.add(new_user)
+                db.session.commit()
+                session['username'] = username
+                flash("{0} is logged in".format(username))
+                return redirect('/newpost')
+        else:
+            flash("Please provide a username, password, and password confirmation")
+    
+    return render_template('signup.html', page_title="Signup")
 
 @app.route('/logout')
 def logout():
