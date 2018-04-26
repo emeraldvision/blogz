@@ -15,23 +15,29 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     body = db.Column(db.String(1000000))
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+#    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
-    def __init__(self, title, body, author):
+    def __init__(self, title, body): #author):
         self.title = title
         self.body = body
-        self.author = author
+#        self.author = author
 
 class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
     pw_hash = db.Column(db.String(255))
-    blogs = db.relationship('Blog', backref="author")
+#    blogs = db.relationship('Blog', backref="author")
 
     def __init__(self, username, password):
         self.username = username
         self.pw_hash = make_pw_hash(password)
+
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'display_blogs', 'index', 'signup']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -40,7 +46,7 @@ def index():
 
 
 @app.route('/blog', methods=['GET', 'POST'])
-def blog():
+def display_blogs():
 
     if request.method == 'POST':
         blog_title = blog_body = ''
