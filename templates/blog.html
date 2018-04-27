@@ -4,7 +4,7 @@
         <div>
             <h3><a href="/blog?id={{post.id}}">{{post.title}}</a></h3>
             <p>{{post.body}}</p>
-            <p><em>written by {{post.author.username}}</em></p>
+            <p><em>written by <a href="/blog?username={{post.author.username}}">{{post.author.username}}</a></em></p>
             <hr>
         </div>
         {% endfor %}

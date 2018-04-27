@@ -66,13 +66,21 @@ def display_blogs():
                 flash("The post body can't be empty")
             return render_template('newpost.html', page_title="Add a Blog", blog_title=blog_title, blog_body=blog_body)
 
-    blog_id_str = (request.args.get('id'))
+    blog_id_str = request.args.get('id')
     if blog_id_str:
         blog_id = int(blog_id_str)
         current_blog = Blog.query.get(blog_id)
         if current_blog:
-            return render_template('singlepost.html', page_title=current_blog.title, blog_body=current_blog.body)
+            return render_template('singlepost.html', page_title=current_blog.title, blog_body=current_blog.body, author=current_blog.author.username)
         flash("That blog post cannot be found")
+    
+    username = request.args.get('username')
+    if username:
+        selected_user = User.query.filter_by(username=username).first()
+        if selected_user:
+            user_posts = Blog.query.filter_by(author_id=selected_user.id).order_by(Blog.id.desc()).all()
+            return render_template('blog.html', page_title="{0}'s Blog Posts".format(username), posts=user_posts)
+        flash("Could not find user {0}".format(username))
 
     blog_posts = Blog.query.order_by(Blog.id.desc()).all()
     return render_template('blog.html', page_title="Build a Blog", posts=blog_posts)
